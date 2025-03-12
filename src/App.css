@@ -1,38 +1,259 @@
-.App {
-  text-align: center;
+/* Light Mode Colors */
+:root {
+  --bg-color: #f4f4f4;
+  --container-bg: beige;
+  --text-color: #333;
+  --primary-color: #007bff;
+  --button-hover: #0056b3;
+  --input-border: #ccc;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Dark Mode Colors */
+.dark-mode {
+  --bg-color: #121212;
+  --container-bg: #1e1e1e;
+  --text-color: #f4f4f4;
+  --primary-color: #ff9800;
+  --button-hover: #e68900;
+  --input-border: #555;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* General Page Styling */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+  min-height: 100vh;
+  transition: background 0.3s ease;
+}
+
+/* Main Container */
+.container {
+  background: var(--container-bg);
+  padding: 20px 50px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 700px; /* Slightly increased max width */
+  text-align: center;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Title */
+h1 {
+  color: var(--primary-color);
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Input Fields */
+.input-field {
+  width: 94%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 2px solid var(--input-border);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.input-field:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+}
+
+/* Add Expense Button */
+.add-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary-color);
   color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s ease-in-out;
 }
 
-.App-link {
-  color: #61dafb;
+.add-btn:hover {
+  background: var(--button-hover);
+  transform: scale(1.05);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Expense List */
+.expense-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.expense-list li {
+  background: var(--container-bg);
+  padding: 12px;
+  margin: 5px 0;
+  border-radius: 8px;
+  border-left: 5px solid var(--primary-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  flex-wrap: wrap;
+  transition: 0.3s;
+}
+
+/* Category Styling */
+.expense-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.category {
+  font-style: italic;
+  color: gray;
+  font-size: 14px;
+}
+
+/* Delete Button */
+.delete-btn {
+  background: blue;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.delete-btn:hover {
+  background: darkred;
+}
+
+/* Dark Mode Toggle */
+.toggle-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 8px 12px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.toggle-btn:hover {
+  background: var(--button-hover);
+}
+
+.monthly-summary {
+  background: var(--container-bg);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.monthly-summary h3 {
+  color: var(--primary-color);
+}
+
+.monthly-summary ul {
+  list-style: none;
+  padding: 0;
+}
+
+.monthly-summary li {
+  padding: 8px 0;
+  font-size: 16px;
+  border-bottom: 1px solid var(--input-border);
+}
+
+.monthly-summary,
+.expense-breakdown {
+  flex: 1;
+  background: var(--container-bg);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px var(--card-shadow);
+  min-width: 45%;
+}
+
+.budget-container,
+.summary-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  
+  gap: 20px;
+
+}
+
+
+.budget-goals{
+  border: 1px solid red;
+  border-radius: 5px;
+  background-color: green;
+}
+
+.over-budget {
+  color: red;
+  font-weight: bold;
+}
+
+.alert {
+  margin-left: 10px;
+  color: red;
+  font-weight: bold;
+}
+
+
+/* 🌟 Responsive Design */
+@media (max-width: 500px) {
+  .container {
+    width: 95%;
+    max-width: 350px;
+    padding: 15px;
   }
-  to {
-    transform: rotate(360deg);
+
+  h1 {
+    font-size: 22px;
   }
+
+  .input-field {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .expense-list li {
+    font-size: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .delete-btn {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  .toggle-btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  
+    .budget-container,
+    .summary-container {
+      flex-direction: column;
+    }
 }
