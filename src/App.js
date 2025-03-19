@@ -12,17 +12,6 @@ function App() {
     return savedExpenses ? JSON.parse(savedExpenses) : [];
   });
 
-  // State for budget goals
-  const [budgetGoals, setBudgetGoals] = useState({
-    Food: 100,
-    Transport: 50,
-    Entertainment: 75,
-    Shopping: 200,
-    Health: 100,
-    Bills: 150,
-    Other: 50
-  });
-
   useEffect(() => {
     localStorage.setItem("expenses", JSON.stringify(expenses));
   }, [expenses]);
@@ -72,21 +61,26 @@ function App() {
     if (expense.description && expense.amount) {
       const formattedDescription =
         expense.description.charAt(0).toUpperCase() + expense.description.slice(1).toLowerCase();
-
+  
       const category = await categorizeExpense(expense.description);
       const amountValue = parseFloat(expense.amount);
-
+  
+      // Check if expense already exists
       const existingExpenseIndex = expenses.findIndex(
         (exp) => exp.description.toLowerCase() === formattedDescription.toLowerCase()
       );
-
+  
       let updatedExpenses;
-
+  
       if (existingExpenseIndex !== -1) {
+        // Update the existing expense amount
         updatedExpenses = expenses.map((exp, index) =>
-          index === existingExpenseIndex ? { ...exp, amount: parseFloat(exp.amount) + amountValue } : exp
+          index === existingExpenseIndex
+            ? { ...exp, amount: parseFloat(exp.amount) + amountValue } // Add the amount to existing expense
+            : exp
         );
       } else {
+        // Add new expense
         const newExpense = {
           ...expense,
           description: formattedDescription,
@@ -96,33 +90,32 @@ function App() {
         };
         updatedExpenses = [...expenses, newExpense];
       }
-
+  
       setExpenses(updatedExpenses);
-      setExpense({ description: "", amount: "" });
+      setExpense({ description: "", amount: "" }); // Clear input fields
     }
   };
-
+  
   const deleteExpense = (index) => {
     const updatedExpenses = expenses.filter((_, i) => i !== index);
     setExpenses(updatedExpenses);
   };
 
-  // Function to calculate total expenses per category
-  const getCategoryTotals = () => {
-    const totals = {};
+  // Function to calculate total expenses per month
+  const getMonthlySummary = () => {
+    const summary = {};
 
     expenses.forEach((expense) => {
-      totals[expense.category] = (totals[expense.category] || 0) + parseFloat(expense.amount);
+      const month = new Date(expense.date).toLocaleString("default", { month: "long", year: "numeric" });
+
+      if (!summary[month]) {
+        summary[month] = 0;
+      }
+
+      summary[month] += parseFloat(expense.amount);
     });
 
-    return totals;
-  };
-
-  const categoryTotals = getCategoryTotals();
-
-  // Function to update budget limits
-  const updateBudget = (category, newLimit) => {
-    setBudgetGoals((prev) => ({ ...prev, [category]: parseFloat(newLimit) || 0 }));
+    return summary;
   };
 
   // Dark Mode Toggle
@@ -172,60 +165,24 @@ function App() {
         ))}
       </ul>
 
-      {/* Budget Goals */}
-     <div className= "budget-container ">
-      <div className="budget-goals">
-    <h3>Budget Goals</h3>
-    <ul>
-      {Object.entries(budgetGoals).map(([category, limit]) => {
-        const spent = categoryTotals[category] || 0;
-        const isOverBudget = spent > limit;
-
-        return (
-          <li key={category} className={isOverBudget ? "over-budget" : ""}>
-            {category}: Spent ${spent} / Budget ${limit}
-            {isOverBudget && <span className="alert">⚠ Over budget!</span>}
-          </li>
-        );
-      })}
-    </ul>
-  </div>
-
-      {/* Budget Settings */}
-      <div className="budget-settings">
-    <h3>Set Budget Goals</h3>
-    {Object.keys(budgetGoals).map((category) => (
-      <div key={category}>
-        <label>{category}:</label>
-        <input
-          type="number"
-          value={budgetGoals[category]}
-          onChange={(e) => updateBudget(category, e.target.value)}
-        />
-      </div>
-    ))}
-  </div>
-  </div>
-
       {/* Monthly Summary */}
-    <div className="summary-container">
-   
+      <div className="summary-container">
         <div className="monthly-summary">
           <h3>Monthly Summary</h3>
           <ul>
-            {Object.entries(getCategoryTotals()).map(([month, total]) => (
+            {Object.entries(getMonthlySummary()).map(([month, total]) => (
               <li key={month}>
                 {month}: <strong>${total.toFixed(2)}</strong>
               </li>
             ))}
           </ul>
         </div>
-      
-      {/* Expense Chart */}
-      <div className="expense-breakdown">
-    {expenses.length > 0 && <ExpenseChart expenses={expenses} />}
-  </div>
-  </div>
+
+        {/* Expense Chart */}
+        <div className="expense-breakdown">
+          {expenses.length > 0 && <ExpenseChart expenses={expenses} />}
+        </div>
+      </div>
     </div>
   );
 }
